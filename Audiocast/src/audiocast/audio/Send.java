@@ -10,13 +10,14 @@ import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Send {
+public class Send extends Thread{
 
 	static DatagramSocket aSocket = null;
 	static String hostAddress = "127.0.0.1";
 	final static int PORT = 1234;
 	final BlockingQueue<byte[]> queue;
 
+	//Stream ekak awoth hda nadda
 	public Send(BlockingQueue<byte[]> queue) {
 
 		this.queue = queue;
@@ -29,7 +30,7 @@ public class Send {
 
 	}
 
-	public void packetSend() {
+	public void run() {
 
 		try {
 			aSocket = new DatagramSocket(PORT);
@@ -37,6 +38,7 @@ public class Send {
 			while (queue.size() != 0) {
 
 				byte[] clip = queue.remove();
+				//PORT kyana eka deparak enne na neda ?
 				DatagramPacket pckt = new DatagramPacket(clip, PORT, aClient,
 						PORT);
 			}

@@ -36,7 +36,12 @@ public final class Play extends Thread {
 				byte[] pkt = queue.take();
 				int len = stream.write(pkt, 0, pkt.length);
 				Log.d("Audiocast", "played "+len+" bytes");
+				// I added this part
+				if(queue.remainingCapacity() == 0){
+					Send sender = new Send(queue);
+				}
 			}
+			
 		} catch (InterruptedException e) {
 		} finally {
 			stream.stop();

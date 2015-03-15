@@ -20,7 +20,7 @@ import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Recieve {
+public class Recieve extends Thread{
 
 	static DatagramSocket aSocket = null;
 	static String hostAddress = "127.0.0.1";
@@ -51,5 +51,7 @@ public class Recieve {
 		}
 
 	}
+	
+	
 
 }
