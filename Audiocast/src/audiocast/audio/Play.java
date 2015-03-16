@@ -1,5 +1,6 @@
 package audiocast.audio;
 
+import java.net.DatagramSocket;
 import java.util.concurrent.BlockingQueue;
 
 import android.media.AudioFormat;
@@ -11,6 +12,7 @@ public final class Play extends Thread {
 
 	final AudioTrack stream;
 	final BlockingQueue<byte[]> queue;	
+	DatagramSocket socket;
 	
 	public Play(int sampleHz, BlockingQueue<byte[]> queue) {
 		this.queue = queue;
@@ -26,26 +28,28 @@ public final class Play extends Thread {
 					AudioFormat.ENCODING_PCM_16BIT,  
 					bufsize,
 					AudioTrack.MODE_STREAM);
-		
+	
 	}
 
 	@Override
 	public void run() {
 		try {
 			while (!Thread.interrupted()) {
-				byte[] pkt = queue.take();
+				
+				Recieve recieve = new Recieve(socket);
+				byte[] pkt = recieve.queue.take();
 				int len = stream.write(pkt, 0, pkt.length);
 				Log.d("Audiocast", "played "+len+" bytes");
-				// I added this part
-				if(queue.remainingCapacity() == 0){
-					Send sender = new Send(queue);
-				}
 			}
 			
 		} catch (InterruptedException e) {
+			
 		} finally {
+			
 			stream.stop();
 			stream.release();
+			socket.close();
+		
 		}
 	}
 	

@@ -20,17 +20,19 @@ import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Recieve extends Thread{
+public class Recieve{
 
-	static DatagramSocket aSocket = null;
+	DatagramSocket aSocket = null;
 	static String hostAddress = "127.0.0.1";
 	final static int PORT = 1234;
 	BlockingQueue<byte[]> queue;
 
-	public Recieve() {
+	public Recieve(DatagramSocket socket) {
 
+		
 		byte[] buffer = new byte[1024];
-
+		this.aSocket = socket;
+		
 		DatagramPacket rcvPckt = new DatagramPacket(buffer, buffer.length);
 
 		try {
@@ -40,18 +42,24 @@ public class Recieve extends Thread{
 
 				queue.add(rcvPckt.getData());
 
-				aSocket.setSoTimeout(10000);
+				if(queue.remainingCapacity() == 0) break;
+				//aSocket.setSoTimeout(10000);
 
 			}
 		} catch (SocketException e) {
 
 		} catch (IOException e) {
 
-			aSocket.close();
+			//aSocket.close();
 		}
 
 	}
 	
+	public BlockingQueue<byte[]> getQueue(){
+		
+		return queue;
+		
+	}
 	
 
 }
